@@ -16,7 +16,7 @@ from torch.utils.data import DataLoader
 from inference import get_query_embedding
 
 
-def measure_performance(labels_dir, 
+def measure_performance(labels_dir,
             img_dir, img_fts_dir,
             weights_file,
             subset="inference"):
@@ -29,7 +29,7 @@ def measure_performance(labels_dir,
         img_fts_dir : Directory holding the pca reduced features generated through create_db.py script
         weights_file: path of trained weights file
         subset      : train/ valid/ inference
-    
+
     Returns:
         Mean Average Precision over all queries corresponding to the dataset
     """
@@ -48,14 +48,14 @@ def measure_performance(labels_dir,
         ap = inference_on_single_labelled_image_pca(query_img_file=i, labels_dir=labels_dir, img_dir=img_dir, img_fts_dir=img_fts_dir, weights_file=weights_file, plot=False)
         aps.append(ap)
 
-    
+
     return np.array(aps).mean()
 
 
 
 
 
-def getQueryNames(labels_dir="./static/data/oxbuild/gt_files/", 
+def getQueryNames(labels_dir="./static/data/oxbuild/gt_files/",
                 img_dir="./static/data/oxbuild/images/"):
 
     """
@@ -74,7 +74,7 @@ def getQueryNames(labels_dir="./static/data/oxbuild/gt_files/",
         query_names[i]=img_dir[1:]+query_names[i]
     return QUERY_EXTRACTOR.get_query_names()
 
-    
+
 
 def getModel(weights_file="./static/weights/oxbuild_final.pth"):
 
@@ -99,7 +99,7 @@ def getModel(weights_file="./static/weights/oxbuild_final.pth"):
 
 #Были удалены функция для валидации
 ################################################################ NAM NADO OSTSUDA####################################################
-def inference_on_single_labelled_image_pca_web_original(model, query_img_file, 
+def inference_on_single_labelled_image_pca_web_original(model, query_img_file,
                 img_dir="./static/data/oxbuild/images/",
                 img_fts_dir="./static/fts_pca/oxbuild/",
                 img_dir2="./static/data/paris/images/",
@@ -109,7 +109,7 @@ def inference_on_single_labelled_image_pca_web_original(model, query_img_file,
                 top_k=60,
                 plot=False,
                 ):
-    
+
     """
     Function similar to inference_on_single_labelled_image_pca, but modified return values for usage during web deployment for original images where ground truths are unavailable
 

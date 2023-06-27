@@ -17,7 +17,7 @@ def draw_label(img_path, color_code):
     Args:
         img_path    : path of the image
         color_code  : color code of the bounding box
-    
+
     Returns:
         numpy array with the rectangle drawn
     """
@@ -32,11 +32,11 @@ def draw_label(img_path, color_code):
 def ap_at_k_per_query(np_query_labels, k=5):
     """
     Given the binary prediction of labels, this function returns the average precision at specified k
-    
+
     Args:
         np_query_labels : numpy array/ python list with binary values
         k   : cutoff point to find the average precision
-    
+
     Returns:
         Average Precision at k
     """
@@ -60,7 +60,7 @@ def get_preds_and_visualize(best_matches, query_gt_dict, img_dir, top_k_to_plot)
         query_gt_dict   : Dictionary indicating the postive and negative ground truth for query
         img_dir         : Image directory that has all the target images stored
         top_k_to_plot   : number of top results to plot
-    
+
     Returns:
         binary predictions
     """
@@ -74,7 +74,7 @@ def get_preds_and_visualize(best_matches, query_gt_dict, img_dir, top_k_to_plot)
     columns = int(top_k_to_plot/4)
     rows = int(top_k_to_plot/columns)
 
-    for i, pic in enumerate(best_matches): 
+    for i, pic in enumerate(best_matches):
         img_name = "{}".format(pic.split("/")[-1])
         color_code = None
         if img_name in query_gt_dict['positive']:
@@ -86,7 +86,7 @@ def get_preds_and_visualize(best_matches, query_gt_dict, img_dir, top_k_to_plot)
         else:
             color_code = (255, 0, 0)
             preds.append(0)
-        
+
         if i + 1 > top_k_to_plot:
             continue
         else:
@@ -94,23 +94,23 @@ def get_preds_and_visualize(best_matches, query_gt_dict, img_dir, top_k_to_plot)
             img_arr = draw_label(img_path, color_code)
             fig.add_subplot(rows, columns, i+1)
             plt.imshow(img_arr)
-            
+
     plt.show()
-    
+
     return preds
 
 
 def get_preds(best_matches, query_gt_dict):
     """
-    See gets_preds_and_visualize(**args). 
+    See gets_preds_and_visualize(**args).
     It is the same function without any plots
     """
-   
+
     # Create python list to store preds
     preds = []
 
     # Iterate through the best matches and find predictions
-    for i, pic in enumerate(best_matches): 
+    for i, pic in enumerate(best_matches):
         img_name = "{}".format(pic.split("/")[-1])
         if img_name in query_gt_dict['positive']:
             preds.append(1)
@@ -118,7 +118,7 @@ def get_preds(best_matches, query_gt_dict):
             preds.append(0)
         else:
             preds.append(0)
-        
+
     return preds
 
 def get_gt_web(best_matches, query_gt_dict):
@@ -136,7 +136,7 @@ def get_gt_web(best_matches, query_gt_dict):
     preds = []
 
     # Iterate through the best matches and find predictions
-    for i, pic in enumerate(best_matches): 
+    for i, pic in enumerate(best_matches):
         img_name = "{}".format(pic.split("/")[-1])
         if img_name in query_gt_dict['positive']:
             preds.append(1)
@@ -144,7 +144,7 @@ def get_gt_web(best_matches, query_gt_dict):
             preds.append(-1)
         else:
             preds.append(0)
-        
+
     return preds
 
 def ap_per_query(best_matches, query_gt_dict):
@@ -162,7 +162,7 @@ def ap_per_query(best_matches, query_gt_dict):
     preds = []
 
     # Iterate through the best matches and find predictions
-    for i, pic in enumerate(best_matches): 
+    for i, pic in enumerate(best_matches):
         img_name = "{}".format(pic.split("/")[-1])
         if img_name in query_gt_dict['positive']:
             preds.append(1)
@@ -170,7 +170,7 @@ def ap_per_query(best_matches, query_gt_dict):
             preds.append(0)
         else:
             preds.append(0)
-    
+
     num_gt = len(query_gt_dict['positive'])
 
     return ap_at_k_per_query(preds, k=num_gt)
@@ -179,14 +179,14 @@ def ap_per_query(best_matches, query_gt_dict):
 def plot_history(train_hist, val_hist, y_label, filename, labels=["train", "validation"]):
     """
     Plot training and validation history
-    
+
     Args:
         train_hist: numpy array consisting of train history values (loss/ accuracy metrics)
         valid_hist: numpy array consisting of validation history values (loss/ accuracy metrics)
         y_label: label for y_axis
         filename: filename to store the resulting plot
         labels: legend for the plot
-        
+
     Returns:
         None
     """
@@ -210,7 +210,7 @@ def center_crop_numpy(img, cropx, cropy):
         img     : numpy image array
         cropx   : width of crop
         cropy   : height of crop
-    
+
     Returns:
         cropped numpy image array
     """
@@ -228,7 +228,7 @@ def perform_pca_on_single_vector(ft_np_vector, n_components=2, reshape_dim=2048)
         ft_np_vector    : numpy feature vector
         n_components    : number of principal components
         reshape_dim     : height of reshaped matrix
-    
+
     Returns
         PCA performed vector
     """
@@ -248,7 +248,7 @@ def template_matching(target_img_path, compare_img_path_list, img_dir, top_k=500
         compare_img_path_list   : paths of images to be compared as a list
         img_dir                 : Image directory
         top_k                   : Number of top similar image paths to return
-    
+
     Returns:
         top_k structurally similar image paths
 
@@ -257,13 +257,13 @@ def template_matching(target_img_path, compare_img_path_list, img_dir, top_k=500
         > print(files)
         > template_matching("./data/oxbuild/images/all_souls_000051.jpg", files, "./data/oxbuild/images/", 500)
     """
-    
+
     ssim = []
     for other_img_path in tqdm(compare_img_path_list):
         # load the two input images
         image_target = cv2.imread(os.path.join(img_dir, target_img_path))
         image_other = cv2.imread(os.path.join(img_dir, other_img_path))
-        
+
         image_target = center_crop_numpy(image_target, 500, 500)
         image_other = center_crop_numpy(image_other, 500, 500)
 

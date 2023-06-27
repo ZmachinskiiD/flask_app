@@ -13,24 +13,24 @@ upload_filename = ""
 model_oxford = code_base.getModel() # FROM INFER_ON_SINGLE_IMAGE
 model_paris = code_base.getModel(weights_file="./static/weights/paris_final.pth")
 
-valid_img_oxford = code_base.getQueryNames(labels_dir="./static/data/oxbuild/gt_files/", 
+valid_img_oxford = code_base.getQueryNames(labels_dir="./static/data/oxbuild/gt_files/",
                 img_dir="./static/data/oxbuild/images/") # FROM INFER_ON_SINGLE_IMAGE returns list of images that are grouped
-valid_img_paris = code_base.getQueryNames(labels_dir="./static/data/paris/gt_files/", 
+valid_img_paris = code_base.getQueryNames(labels_dir="./static/data/paris/gt_files/",
                 img_dir="./static/data/paris/images/") # FROM INFER_ON_SINGLE_IMAGE returns list of images that are grouped
 
 # Main page
 @app.route("/", methods=['GET', 'POST'])
 def index():
     #return render_template("main.html", valid_img_oxford=valid_img_oxford, valid_img_paris=valid_img_paris) #PEREDAET V TEMPLATE DVA SETA
-    return render_template("main.html") 
+    return render_template("main.html")
 
 # Validation page (from main page)
 """ @app.route("/ImgSelected/<group_name>/<img_number>")
 
-def evaluateValid(group_name,img_number): #VIBOR POCHOgICH KARTINOK IZ DATASETOV 
+def evaluateValid(group_name,img_number): #VIBOR POCHOgICH KARTINOK IZ DATASETOV
     if (group_name=="paris"):
         filename = valid_img_paris[int(img_number)]
-        similar_images, gt = code_base.inference_on_single_labelled_image_pca_web(model_paris,filename,labels_dir="./static/data/paris/gt_files/", 
+        similar_images, gt = code_base.inference_on_single_labelled_image_pca_web(model_paris,filename,labels_dir="./static/data/paris/gt_files/",
                 img_dir="./static/data/paris/images/",
                 img_fts_dir="./static/fts_pca/paris/")
         prev_evaluated_images = similar_images

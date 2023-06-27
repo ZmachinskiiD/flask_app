@@ -23,7 +23,7 @@ class TripletNet(nn.Module):
 
         # Get embedding for negative and normalize
         negative_embedding = F.normalize(self.embedding_net(negative), p=2, dim=0)
-        
+
         return anchor_embedding, positive_embedding, negative_embedding
 
 
@@ -53,11 +53,11 @@ class TripletLoss(nn.Module):
         losses = F.relu(distance_positive - distance_negative + self.margin)
         #print(losses)
         return losses.mean() if size_average else losses.sum()
-    
-    
+
+
     def reduce_margin(self):
         self.margin = self.margin*0.8
-    
+
 
 
 class Identity(nn.Module):
@@ -83,7 +83,7 @@ def create_embedding_net():
 
     # Now modify the network layers
     resnet_model.fc = Identity()
-    resnet_model.avgpool =  Identity()   
+    resnet_model.avgpool =  Identity()
     #print(resnet_model)
 
     return resnet_model

@@ -11,7 +11,7 @@ from utils import template_matching
 class QueryExtractor():
     """
     This class extracts all the queries and triplets for both datasets
-    
+
     Eg run:
         # Define directories
         > labels_dir, image_dir = "./data/oxbuild/gt_files/", "./data/oxbuild/images/"
@@ -94,7 +94,7 @@ class QueryExtractor():
         line_list = ["{}.jpg".format(line.rstrip('\n')) for line in open(file_path, errors='ignore')]
         return line_list
 
-    
+
     def _get_all_image_files(self):
         all_file_list = [file for file in os.listdir(self.image_dir)]
         return all_file_list
@@ -106,7 +106,7 @@ class QueryExtractor():
         """
         return self.query_list
 
-    
+
     def get_query_map(self):
         """
         Returns the query map
@@ -122,7 +122,7 @@ class QueryExtractor():
         line_list = ["{}.jpg".format(line.rstrip('\n').split()[0].replace(self.query_suffix, "")) for line in open(file_path, encoding="utf8")][0]
         return line_list
 
-    
+
     def _get_remaining_image_files(self, tmp_set):
         """
         Get all the negative images corresponding to query
@@ -147,7 +147,7 @@ class QueryExtractor():
         for anchor in self.query_names:
             anchor_positive_pairs = [(anchor, positive) for positive in self.query_map[anchor]['positive']]
             anchor_negative_pairs = [(anchor, negative) for negative in self.query_map[anchor]['negative']]
-            
+
             # Define a low bound and filter based
             low_bound = min(len(anchor_positive_pairs), len(anchor_negative_pairs))
 
@@ -159,8 +159,8 @@ class QueryExtractor():
             # Create the triplet list and append
             triplet_list = [[anchor_positive_pairs[i], anchor_negative_pairs[i]] for i in range(low_bound)]
             self.triplet_pairs.extend(triplet_list)
-        
-    
+
+
     def _create_bad_image_files(self, query_txt_file, target_img_path, compare_img_list):
         """
         This function uses structural similarity to create hard negative examples for a given query.
@@ -173,17 +173,17 @@ class QueryExtractor():
         for i in range(1, 6):
             file_name = bad_file_name.replace("1", str(i))
             target_bad_files.append(file_name)
-        
+
         neg_list = template_matching(target_img_path, compare_img_list, self.image_dir)
-        
+
         for bad_file in target_bad_files:
             with open(bad_file, 'w+') as f:
                 for item in neg_list:
                     f.write("%s\n" % item.replace(".jpg", ""))
-        
+
         return neg_list
 
-    
+
     def _get_blacklist(self):
         """
         Paris 6k dataset has blacklisted images that should be filtered.
@@ -217,7 +217,7 @@ class QueryExtractor():
         shuffle(self.triplet_pairs)
         return self.triplet_pairs
 
-    
+
     def reset(self):
         """
         Regenerate triplets using different combinations. Do note that the number of triplets is cubic in anchor examples.
@@ -227,7 +227,7 @@ class QueryExtractor():
         shuffle(self.triplet_pairs)
         return self.triplet_pairs
 
-    
+
 
 
 class VggImageRetrievalDataset(Dataset):
@@ -240,7 +240,7 @@ class VggImageRetrievalDataset(Dataset):
 
         # Create Query extractor object
         > q = QueryExtractor(labels_dir, image_dir, subset="inference", query_suffix="oxc1_")
-        
+
         # Instantiate dataset class and retrieve the first triplet
         > ox = VggImageRetrievalDataset(labels_dir, image_dir, q, transforms=transforms_test)
         > a, p, n = ox.__getitem__(0)
@@ -252,7 +252,7 @@ class VggImageRetrievalDataset(Dataset):
         self.triplet_generator = triplet_pair_generator
         self.triplet_pairs = triplet_pair_generator.reset()
         self.transforms = transforms
-        
+
 
     def reset(self):
         self.triplet_pairs = self.triplet_generator.reset()
@@ -275,21 +275,21 @@ class VggImageRetrievalDataset(Dataset):
         anchor_img = Image.open(anchor_path).convert('RGB')
         positive_img = Image.open(positive_path).convert('RGB')
         negative_img = Image.open(negative_path).convert('RGB')
-        
+
         # Transform the images
         if self.transforms is not None:
             anchor_img = self.transforms(anchor_img)
             positive_img = self.transforms(positive_img)
             neg_img = self.transforms(negative_img)
             return anchor_img, positive_img, neg_img
-        
+
         return anchor_img, positive_img, negative_img
-    
+
 
     def __len__(self):
         return len(self.triplet_pairs)
 
-    
+
 class EmbeddingDataset(Dataset):
     """
     Evaluation dataset used to obtain the embeddings
@@ -297,18 +297,18 @@ class EmbeddingDataset(Dataset):
     def __init__(self, image_dir, query_img_list, transforms):
         if transforms == None:
             raise
-        
+
         self.image_dir = image_dir
         self.transforms = transforms
         self.filenames = query_img_list
-    
+
 
     def __getitem__(self, index):
         image_path = self.filenames[index]
         image = Image.open(image_path).convert('RGB')
         image = self.transforms(image)
         return image
-        
+
 
     def __len__(self):
         return len(self.filenames)
@@ -336,7 +336,7 @@ class EmbeddingDataset(Dataset):
 # transforms_test = transforms.Compose([transforms.Resize(460),
 #                                     transforms.RandomResizedCrop(448, scale=(0.8, 1.2)),
 #                                     transforms.ToTensor(),
-#                                     #transforms.Normalize(mean=mean, std=std),                                 
+#                                     #transforms.Normalize(mean=mean, std=std),
 #                                     ])
 # # Create dataset
 # ox = VggImageRetrievalDataset(labels_dir, image_dir, q, transforms=transforms_test)
