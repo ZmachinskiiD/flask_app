@@ -6,7 +6,6 @@
  
 <!-- If IE use the latest rendering engine -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
- <!-- PROVERKA TOGO CHTO ETO MAIN -->
 <!-- Set the page to the width of the device and set the zoon level -->
 <meta name="viewport" content="width = device-width, initial-scale = 1">
 <title>Bootstrap Tutorial</title>
@@ -40,17 +39,25 @@
 <!-- Main button toggles: Validate and Upload-->
 <ul class="nav nav-pills">
   <!-- <li class="active"><a data-toggle="tab" href="#validation">Validate</a></li>--> <!-- KNOPKA VALIDATE NAM NE NUZHNA--> 
-  <li><a data-toggle="tab" href="#upload">Загрузка</a></li>
+  <li><a data-toggle="tab" href="#upload">Проверка картинки</a></li>
 </ul>
 <div class="tab-content">
 
   <!-- Upload Toggle-->
   <div id="upload" class="tab-pane fade">
-    <h4>Загрузка картинки </h4>
+
+
+    <h4>Выберите картинку </h4>
     <form method=POST enctype=multipart/form-data action="{{ url_for('evaluateNew') }}">
         <input type=file name=photo>
-        <input type="submit">
+        <input type="text" name=directory placeholder="Введите название датасета" required>
+        <input type="text" name=model placeholder="Введите название модели" required>
+        <input type="submit", value="Ввести данные">
+    </form>
   </div>
+
+
+
 </div>
 </div>
 </div>
