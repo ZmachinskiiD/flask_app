@@ -3,7 +3,7 @@ import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 import os
-from skimage.measure import compare_ssim
+from skimage.metrics import structural_similarity
 import cv2
 from tqdm import tqdm
 from sklearn.decomposition import PCA
@@ -276,7 +276,7 @@ def template_matching(target_img_path, compare_img_path_list, img_dir, top_k=500
 
         # compute the Structural Similarity Index (SSIM) between the two
         # images, ensuring that the difference image is returned
-        score = compare_ssim(gray_target, gray_other, full=False)
+        score = structural_similarity(gray_target, gray_other, full=False)
         ssim.append(score)
 
     indexes = (-np.array(ssim)).argsort()[:top_k]
