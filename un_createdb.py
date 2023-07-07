@@ -133,16 +133,8 @@ if __name__ == '__main__':
             print(f'creating features for static/data/{dir_name}')
             view = which_view('drone')
             features = extract_feature(model, dataloaders[dir_name], opt, view)
-            fts = []
-            for i in range(len(features)):
-                fts.append((image_datasets[dir_name].imgs[i][0], features[i].numpy()))
-            test_result = {'imgs_fts':fts}
-            result = {
-                'features':features.numpy(),
-                'label': view,
-                'path': image_datasets[dir_name].imgs,
-            }
+            fts = [(image_datasets[dir_name].imgs[i][0], features[i].numpy()) for i in range(len(features))]
+            result = {'imgs_fts': fts}
             print(f'saving features for static/data/{dir_name}')
             scipy.io.savemat(f'static/data/{dir_name}/features.mat', result)
-            scipy.io.savemat(f'static/data/{dir_name}/test_features.mat', test_result)
     print('done')

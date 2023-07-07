@@ -27,12 +27,10 @@ def evaluateNew():
     if request.method == 'POST' and 'photo' in request.files:
         filename = photos.save(request.files['photo'])
         filename = '/static/temp/'+filename
-        similar_images_ = similar_images(model, filename)['0']
-        similar_images_ = [similar_images_[i][0] for i in range(len(similar_images_))]
+        similar_images_ = similar_images(model, filename)
         for i in range(len(similar_images_)):
             similar_images_[i] = similar_images_[i].strip()
             similar_images_[i] = '../../' + similar_images_[i]
-        print(similar_images_)
         gt = [0]*60
         prev_evaluated_images = similar_images_
         session['prev_evaluated_images'] = prev_evaluated_images
