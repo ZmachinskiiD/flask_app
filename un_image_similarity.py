@@ -1,4 +1,7 @@
 import os
+import shutil
+import datetime
+from time import sleep
 
 import torch
 import scipy.io
@@ -6,6 +9,16 @@ import numpy as np
 
 from un_utils import find_similar, gen_opt
 from un_createdb import extract_feature, create_dataloaders, prepare_model
+
+def copy_to_dir(path):
+    dir_name = datetime.datetime.now().strftime("%m_%d_%H:%M:%S")
+    sleep(5)
+    copy_to = os.path.join('static', 'temp', dir_name)
+    os.mkdir(copy_to)
+
+    img_name = path[path.rfind('/')+1:]
+    shutil.copyfile(path, os.path.join(copy_to, img_name))
+    return copy_to
 
 def similar_images(model, path):
     features_mat = {}
@@ -19,20 +32,15 @@ def similar_images(model, path):
     features_arr = [(features_mat[key]['imgs_fts'][i][0][0], features_mat[key]['imgs_fts'][i][1]) for key in features_mat.keys() for i in range(len(features_mat[key]['imgs_fts']))]
 
     opt = gen_opt()
-    #img_name = path[path.rfind('/')+1:path.rfind('.')]
-    #extension = path[path.rfind('.'):]
-    #dir_ = os.path.join('static', 'temp', img_name)
-    #os.mkdir(dir_)
-    #copy_to = os.path.join(dir_, img_name+extension)
-    #print(copy_to)
-    #shutil.copyfile(path, copy_to)
-    dataloader, image_dataset = create_dataloaders('static', opt)
-    feature = extract_feature(model, dataloader['temp'], opt)
+    copied_to = copy_to_dir(path)
+    dataloader, image_dataset = create_dataloaders('static/temp', opt)
+    feature = extract_feature(model, dataloader, opt)
+    scipy.io.savemat(f'{copied_to}/feature.mat', feature)
     similar = find_similar(feature, torch.FloatTensor(np.array([ft[1] for ft in features_arr])).squeeze())
 
     return [features_arr[index][0] for index in similar]
 
 if __name__ == '__main__':
     model = prepare_model('three_view_long_share_d0.75_256_s1_google', gen_opt())
-    imgs = similar_images(model, 'static/temp/0000/0001.jpg')
+    imgs = similar_images(model, 'static/temp/0000.jpg')
     print(imgs)

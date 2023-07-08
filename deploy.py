@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 from flask import Flask, request, render_template, session
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -26,7 +27,11 @@ def index():
 def evaluateNew():
     if request.method == 'POST' and 'photo' in request.files:
         filename = photos.save(request.files['photo'])
+        sleep(5)
         filename = '/static/temp/'+filename
+        print(filename)
+        filename = os.path.abspath(filename)
+        print(filename)
         similar_images_ = similar_images(model, filename)
         for i in range(len(similar_images_)):
             similar_images_[i] = similar_images_[i].strip()
