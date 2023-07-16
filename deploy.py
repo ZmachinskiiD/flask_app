@@ -5,7 +5,7 @@ from flask import Flask, request, render_template, session
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 import infer_on_single_image as code_base
-from un_utils import gen_opt
+from un_utils import gen_opt, copy_img
 from un_createdb import prepare_model
 from un_image_similarity import similar_images
 
@@ -29,10 +29,12 @@ def evaluateNew():
         filename = photos.save(request.files['photo'])
         sleep(5)
         filename = '/static/temp/'+filename
-        print(filename)
-        filename = os.path.abspath(filename)
-        print(filename)
+        #костыли. почему-то картинка не копируется если передать static/temp,
+        #но копируется, если передать абсолютный путь.
+        abspath = os.getcwd() + filename
+        copy_img(abspath, 'static/temp')
         similar_images_ = similar_images(model, filename)
+        #тоже какая-то проблема с путями, решить по другому не получилось
         for i in range(len(similar_images_)):
             similar_images_[i] = similar_images_[i].strip()
             similar_images_[i] = '../../' + similar_images_[i]

@@ -90,10 +90,10 @@ def prepare_model(name, opt):
     model = model.eval()
     return model
 
-def create_dataloaders(data_dir, opt):
-    img_dirs = [file for file in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, file))]
-    img_dirs = [dir_ for dir_ in img_dirs if not os.path.exists(os.path.join(data_dir, dir_, 'features.mat'))]
-    print(f'creating dataloaders for the following directories in {data_dir} :', img_dirs)
+def create_dataloaders(root_dir, opt):
+    img_dirs = [file for file in os.listdir(root_dir) if os.path.isdir(os.path.join(root_dir, file))]
+    img_dirs = [dir_ for dir_ in img_dirs if not os.path.exists(os.path.join(root_dir, dir_, 'features.mat'))]
+    print(f'creating dataloaders for the following directories in {root_dir} :', img_dirs)
 
     data_transforms = transforms.Compose([
         transforms.Resize((opt.h, opt.w), interpolation=3),
@@ -108,7 +108,7 @@ def create_dataloaders(data_dir, opt):
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
-    image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms) for x in img_dirs}
+    image_datasets = {x: datasets.ImageFolder(os.path.join(root_dir, x), data_transforms) for x in img_dirs}
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32, shuffle=False, num_workers=4) for x in img_dirs}
     return dataloaders, image_datasets
 
