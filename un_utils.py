@@ -1,5 +1,6 @@
 import argparse
 import os
+import shutil
 
 from yaml import Loader
 import yaml
@@ -20,6 +21,15 @@ def make_weights_for_balanced_classes(images, nclasses):
     for idx, val in enumerate(images):
         weight[idx] = weight_per_class[val[1]]
     return weight
+
+def copy_img(src, to):
+    img_name = src[src.rfind('/')+1:src.rfind('.')]
+    extension = src[src.rfind('.'):]
+    img_dir = os.path.join(to, img_name, 'img')
+    os.makedirs(img_dir)
+    copy_to = os.path.join(img_dir, img_name+extension)
+    print(f'copying {src} to {copy_to}')
+    shutil.copyfile(src, copy_to)
 
 def gen_opt():
     parser = argparse.ArgumentParser(description='Training')
